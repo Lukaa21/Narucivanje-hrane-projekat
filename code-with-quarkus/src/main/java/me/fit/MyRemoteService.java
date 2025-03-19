@@ -1,4 +1,4 @@
-package org.acme;
+package me.fit;
 
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 

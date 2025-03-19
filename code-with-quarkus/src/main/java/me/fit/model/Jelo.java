@@ -1,17 +1,28 @@
-package model;
+package me.fit.model;
 
+import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@Entity
 public class Jelo {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
     private String naziv;
     private double cijena;
+
+    @ManyToOne
+    @JoinColumn(name = "restoran_id", nullable = false)
     private Restoran restoran;
+
+    @ManyToMany(mappedBy = "jela")
     private List<Narudzbina> narudzbine = new ArrayList<>();
 
-    public Jelo(int id, String naziv, double cijena, Restoran restoran) {
-        this.id = id;
+    public Jelo() {}
+
+    public Jelo(String naziv, double cijena, Restoran restoran) {
         this.naziv = naziv;
         this.cijena = cijena;
         this.restoran = restoran;
@@ -30,10 +41,9 @@ public class Jelo {
     public void setRestoran(Restoran restoran) { this.restoran = restoran; }
 
     public List<Narudzbina> getNarudzbine() { return narudzbine; }
-    public void addNarudzbina(Narudzbina narudzbina) { narudzbine.add(narudzbina); }
 
     @Override
     public String toString() {
-        return "Jelo{id=" + id + ", naziv='" + naziv + "', cijena=" + cijena + "}";
+        return "Jelo{id=" + id + ", naziv='" + naziv + "', cijena=" + cijena + ", restoran=" + restoran.getNaziv() + "}";
     }
 }

@@ -1,4 +1,4 @@
-package org.acme;
+package me.fit;
 
 import io.quarkus.test.junit.QuarkusIntegrationTest;
 
