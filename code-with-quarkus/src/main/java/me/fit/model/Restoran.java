@@ -1,25 +1,32 @@
 package me.fit.model;
 
 import jakarta.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 @Entity
+@NamedQuery(name = "Restoran.getAllRestorani", query = "SELECT r FROM Restoran r")
 @Table(name = "restoran")
 public class Restoran {
+    public static final String GET_ALL_RESTORANI = "Restoran.getAllRestorani";
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // Auto-increment ID
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private int id;
 
     private String naziv;
     private String lokacija;
 
-    @OneToMany(mappedBy = "restoran", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Jelo> jela = new ArrayList<>();
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "restoran_id")
+    private Set<Jelo> jela;
 
-    public Restoran() {}
+    public Restoran() {
+        super();
+    }
 
     public Restoran(String naziv, String lokacija) {
+        super();
         this.naziv = naziv;
         this.lokacija = lokacija;
     }
@@ -33,14 +40,22 @@ public class Restoran {
     public String getLokacija() { return lokacija; }
     public void setLokacija(String lokacija) { this.lokacija = lokacija; }
 
-    public List<Jelo> getJela() { return jela; }
-    public void addJelo(Jelo jelo) {
-        jela.add(jelo);
-        jelo.setRestoran(this); // Postavljamo referencu na restoran
-    }
+    public Set<Jelo> getJela() { return jela; }
+    public void setJela(Set<Jelo> jela) {this.jela = jela;}
 
     @Override
     public String toString() {
         return "Restoran{id=" + id + ", naziv='" + naziv + "', lokacija='" + lokacija + "'}";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Restoran restoran)) return false;
+        return id == restoran.id && Objects.equals(naziv, restoran.naziv) && Objects.equals(lokacija, restoran.lokacija) && Objects.equals(jela, restoran.jela);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, naziv, lokacija, jela);
     }
 }

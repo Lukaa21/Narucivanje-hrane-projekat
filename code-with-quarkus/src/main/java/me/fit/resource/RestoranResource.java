@@ -1,0 +1,34 @@
+package me.fit.resource;
+
+import jakarta.inject.Inject;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import me.fit.model.Restoran;
+import me.fit.repository.RestoranRepository;
+import java.util.List;
+
+@Path("/restoran/")
+public class RestoranResource {
+    @Inject
+    RestoranRepository restoranRepo;
+
+    @Path("/getAll/")
+    @GET
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response getAllRestorani(){
+        List<Restoran> restorani = restoranRepo.getAllRestorani();
+        return Response.ok().entity(restorani).build();
+    }
+
+    @Path("/create/")
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response createRestoran(Restoran restoran){
+        Restoran r = restoranRepo.createRestoran(restoran);
+        return Response.ok().entity(r).build();
+    }
+}

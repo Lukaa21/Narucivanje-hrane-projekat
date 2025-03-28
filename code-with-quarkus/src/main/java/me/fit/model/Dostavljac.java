@@ -1,26 +1,33 @@
 package me.fit.model;
 
 import jakarta.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 @Entity
+@NamedQuery(name = "Dostavljac.getAllDostavljaci", query = "SELECT d FROM Dostavljac d")
 @Table(name = "dostavljac")
 public class Dostavljac {
+    public static final String GET_ALL_DOSTAVLJACI = "Dostavljac.getAllDostavljaci";
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private int id;
 
     private String ime;
     private String prezime;
     private String vozilo;
 
-    @OneToMany(mappedBy = "dostavljac", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Narudzbina> narudzbine = new ArrayList<>();
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "dostavljac_id")
+    private Set<Narudzbina> narudzbine;
 
-    public Dostavljac() {}
+    public Dostavljac() {
+        super();
+    }
 
     public Dostavljac(String ime, String prezime, String vozilo) {
+        super();
         this.ime = ime;
         this.prezime = prezime;
         this.vozilo = vozilo;
@@ -38,14 +45,21 @@ public class Dostavljac {
     public String getVozilo() { return vozilo; }
     public void setVozilo(String vozilo) { this.vozilo = vozilo; }
 
-    public List<Narudzbina> getNarudzbine() { return narudzbine; }
-    public void addNarudzbina(Narudzbina narudzbina) {
-        narudzbine.add(narudzbina);
-        narudzbina.setDostavljac(this);
-    }
+    public Set<Narudzbina> getNarudzbine() { return narudzbine; }
 
     @Override
     public String toString() {
         return "Dostavljac{id=" + id + ", ime='" + ime + "', prezime='" + prezime + "', vozilo='" + vozilo + "'}";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Dostavljac that)) return false;
+        return id == that.id && Objects.equals(ime, that.ime) && Objects.equals(prezime, that.prezime) && Objects.equals(vozilo, that.vozilo) && Objects.equals(narudzbine, that.narudzbine);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, ime, prezime, vozilo, narudzbine);
     }
 }

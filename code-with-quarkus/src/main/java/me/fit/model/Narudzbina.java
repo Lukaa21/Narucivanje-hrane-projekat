@@ -3,35 +3,37 @@ package me.fit.model;
 import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
+@NamedQuery(name = "Narudzbina.getAllNarudzbine",
+            query = "SELECT n FROM Narudzbina n LEFT JOIN FETCH n.narucilac LEFT JOIN FETCH n.dostavljac")
+@Table(name = "narudzbina")
 public class Narudzbina {
+    public static final String GET_ALL_NARUDZBINE = "Narudzbina.getAllNarudzbine";
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private int id;
 
     private String datum;
     private String status;
 
     @ManyToOne
-    @JoinColumn(name = "narucilac_id", nullable = false)
     private Narucilac narucilac;
 
     @ManyToOne
-    @JoinColumn(name = "dostavljac_id", nullable = false)
     private Dostavljac dostavljac;
 
     @ManyToMany
-    @JoinTable(
-            name = "narudzbina_jelo", // Ime međutabele
-            joinColumns = @JoinColumn(name = "narudzbina_id"), // Strani ključ za Narudzbina
-            inverseJoinColumns = @JoinColumn(name = "jelo_id") // Strani ključ za Jelo
-    )
     private List<Jelo> jela = new ArrayList<>();
 
-    public Narudzbina() {}
+    public Narudzbina() {
+        super();
+    }
 
     public Narudzbina(String datum, String status, Narucilac narucilac, Dostavljac dostavljac) {
+        super();
         this.datum = datum;
         this.status = status;
         this.narucilac = narucilac;
@@ -53,13 +55,21 @@ public class Narudzbina {
     public void setDostavljac(Dostavljac dostavljac) { this.dostavljac = dostavljac; }
 
     public List<Jelo> getJela() { return jela; }
-    public void addJelo(Jelo jelo) {
-        jela.add(jelo);
-        jelo.getNarudzbine().add(this); // Dvosmjerna veza
-    }
+    public void ListJela(List<Jelo> jela) { this.jela = jela; }
 
     @Override
     public String toString() {
         return "Narudzbina{id=" + id + ", datum='" + datum + "', status='" + status + "', narucilac=" + narucilac.getIme() + "}";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Narudzbina that)) return false;
+        return id == that.id && Objects.equals(datum, that.datum) && Objects.equals(status, that.status) && Objects.equals(narucilac, that.narucilac) && Objects.equals(dostavljac, that.dostavljac) && Objects.equals(jela, that.jela);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, datum, status, narucilac, dostavljac, jela);
     }
 }
