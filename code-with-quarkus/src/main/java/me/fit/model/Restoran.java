@@ -1,7 +1,6 @@
 package me.fit.model;
 
 import jakarta.persistence.*;
-import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -12,12 +11,12 @@ public class Restoran {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private int id;
+    private Long id;
 
     private String naziv;
     private String lokacija;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "restoran_id")
     private Set<Jelo> jela;
 
@@ -31,8 +30,8 @@ public class Restoran {
         this.lokacija = lokacija;
     }
 
-    public int getId() { return id; }
-    public void setId(int id) { this.id = id; }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
     public String getNaziv() { return naziv; }
     public void setNaziv(String naziv) { this.naziv = naziv; }
@@ -49,13 +48,39 @@ public class Restoran {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (!(o instanceof Restoran restoran)) return false;
-        return id == restoran.id && Objects.equals(naziv, restoran.naziv) && Objects.equals(lokacija, restoran.lokacija) && Objects.equals(jela, restoran.jela);
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + ((naziv == null) ? 0 : naziv.hashCode());
+        result = prime * result + ((lokacija == null) ? 0 : lokacija.hashCode());
+        return result;
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(id, naziv, lokacija, jela);
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Restoran other = (Restoran) obj;
+        if (id == null) {
+            if (other.id != null)
+                return false;
+        } else if (!id.equals(other.id))
+            return false;
+        if (naziv == null) {
+            if (other.naziv != null)
+                return false;
+        } else if (!naziv.equals(other.naziv))
+            return false;
+        if (lokacija == null) {
+            if (other.lokacija != null)
+                return false;
+        } else if (!lokacija.equals(other.lokacija))
+            return false;
+        return true;
     }
 }

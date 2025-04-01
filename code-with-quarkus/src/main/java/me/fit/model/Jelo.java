@@ -1,17 +1,16 @@
 package me.fit.model;
 
 import jakarta.persistence.*;
-import java.util.Objects;
 
 @Entity
-@NamedQuery(name = "Jelo.getAllJela", query = "SELECT j FROM Jelo j LEFT JOIN FETCH j.restoran")
+@NamedQuery(name = "Jelo.getJelaForRestoran", query = "Select j from Jelo j where j.restoran.id = :id")
 @Table(name = "jelo")
 public class Jelo {
-    public static final String GET_ALL_JELA = "Jelo.getAllJela";
+    public static final String GET_JELA_FOR_RESTORAN = "Jelo.getJelaForRestoran";
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private int id;
+    private Long id;
 
     private String naziv;
     private double cijena;
@@ -23,15 +22,14 @@ public class Jelo {
         super();
     }
 
-    public Jelo(String naziv, double cijena, Restoran restoran) {
+    public Jelo(String naziv, double cijena) {
         super();
         this.naziv = naziv;
         this.cijena = cijena;
-        this.restoran = restoran;
     }
 
-    public int getId() { return id; }
-    public void setId(int id) { this.id = id; }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
     public String getNaziv() { return naziv; }
     public void setNaziv(String naziv) { this.naziv = naziv; }
@@ -39,22 +37,42 @@ public class Jelo {
     public double getCijena() { return cijena; }
     public void setCijena(double cijena) { this.cijena = cijena; }
 
-    public Restoran getRestoran() { return restoran; }
-    public void setRestoran(Restoran restoran) { this.restoran = restoran; }
-
     @Override
     public String toString() {
-        return "Jelo{id=" + id + ", naziv='" + naziv + "', cijena=" + cijena + ", restoran=" + restoran.getNaziv() + "}";
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (!(o instanceof Jelo jelo)) return false;
-        return id == jelo.id && Double.compare(cijena, jelo.cijena) == 0 && Objects.equals(naziv, jelo.naziv) && Objects.equals(restoran, jelo.restoran);
+        return "Jelo{id=" + id + ", naziv='" + naziv + "', cijena=" + cijena;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, naziv, cijena, restoran);
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + ((naziv == null) ? 0 : naziv.hashCode());
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Jelo other = (Jelo) obj;
+        if (id == null) {
+            if (other.id != null)
+                return false;
+        } else if (!id.equals(other.id))
+            return false;
+        if (naziv == null) {
+            if (other.naziv != null)
+                return false;
+        } else if (!naziv.equals(other.naziv))
+            return false;
+        if (Double.doubleToLongBits(cijena) != Double.doubleToLongBits(other.cijena))
+            return false;
+        return true;
     }
 }

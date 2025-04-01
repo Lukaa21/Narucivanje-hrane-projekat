@@ -5,20 +5,17 @@ import java.util.Objects;
 import java.util.Set;
 
 @Entity
-@NamedQuery(name = "Narucilac.getAllNarucioci", query = "SELECT n FROM Narucilac n")
 @Table(name = "narucilac")
 public class Narucilac {
-    public static final String GET_ALL_NARUCIOCI = "Narucilac.getAllNarucioci";
-
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private int id;
+    private Long id;
 
     private String ime;
     private String adresa;
     private String telefon;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "narucilac_id")
     private Set<Narudzbina> narudzbine;
 
@@ -33,8 +30,8 @@ public class Narucilac {
         this.telefon = telefon;
     }
 
-    public int getId() { return id; }
-    public void setId(int id) { this.id = id; }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
     public String getIme() { return ime; }
     public void setIme(String ime) { this.ime = ime; }
@@ -54,13 +51,46 @@ public class Narucilac {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (!(o instanceof Narucilac narucilac)) return false;
-        return id == narucilac.id && Objects.equals(ime, narucilac.ime) && Objects.equals(adresa, narucilac.adresa) && Objects.equals(telefon, narucilac.telefon) && Objects.equals(narudzbine, narucilac.narudzbine);
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Narucilac other = (Narucilac) obj;
+        if (id == null) {
+            if (other.id != null)
+                return false;
+        } else if (!id.equals(other.id))
+            return false;
+        if (ime == null) {
+            if (other.ime != null)
+                return false;
+        } else if (!ime.equals(other.ime))
+            return false;
+        if (adresa == null) {
+            if (other.adresa != null)
+                return false;
+        } else if (!adresa.equals(other.adresa))
+            return false;
+        if (telefon == null) {
+            if (other.telefon != null)
+                return false;
+        } else if (!telefon.equals(other.telefon))
+            return false;
+        return true;
     }
+
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, ime, adresa, telefon, narudzbine);
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + ((ime == null) ? 0 : ime.hashCode());
+        result = prime * result + ((adresa == null) ? 0 : adresa.hashCode());
+        result = prime * result + ((telefon == null) ? 0 : telefon.hashCode());
+        return result;
     }
 }

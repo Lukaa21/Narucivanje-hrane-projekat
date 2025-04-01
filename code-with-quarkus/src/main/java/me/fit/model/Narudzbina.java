@@ -3,18 +3,13 @@ package me.fit.model;
 import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Entity
-@NamedQuery(name = "Narudzbina.getAllNarudzbine",
-            query = "SELECT n FROM Narudzbina n LEFT JOIN FETCH n.narucilac LEFT JOIN FETCH n.dostavljac")
 @Table(name = "narudzbina")
 public class Narudzbina {
-    public static final String GET_ALL_NARUDZBINE = "Narudzbina.getAllNarudzbine";
-
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private int id;
+    private Long id;
 
     private String datum;
     private String status;
@@ -40,8 +35,8 @@ public class Narudzbina {
         this.dostavljac = dostavljac;
     }
 
-    public int getId() { return id; }
-
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
     public String getDatum() { return datum; }
     public void setDatum(String datum) { this.datum = datum; }
 
@@ -63,13 +58,40 @@ public class Narudzbina {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (!(o instanceof Narudzbina that)) return false;
-        return id == that.id && Objects.equals(datum, that.datum) && Objects.equals(status, that.status) && Objects.equals(narucilac, that.narucilac) && Objects.equals(dostavljac, that.dostavljac) && Objects.equals(jela, that.jela);
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Narudzbina other = (Narudzbina) obj;
+        if (id == null) {
+            if (other.id != null)
+                return false;
+        } else if (!id.equals(other.id))
+            return false;
+        if (datum == null) {
+            if (other.datum != null)
+                return false;
+        } else if (!datum.equals(other.datum))
+            return false;
+        if (status == null) {
+            if (other.status != null)
+                return false;
+        } else if (!status.equals(other.status))
+            return false;
+        return true;
     }
+
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, datum, status, narucilac, dostavljac, jela);
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + ((datum == null) ? 0 : datum.hashCode());
+        result = prime * result + ((status == null) ? 0 : status.hashCode());
+        return result;
     }
 }
