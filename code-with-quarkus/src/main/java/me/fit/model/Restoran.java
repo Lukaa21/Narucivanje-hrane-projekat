@@ -4,10 +4,14 @@ import jakarta.persistence.*;
 import java.util.Set;
 
 @Entity
-@NamedQuery(name = "Restoran.getAllRestorani", query = "SELECT r FROM Restoran r")
+@NamedQueries({
+        @NamedQuery(name = "Restoran.getAllRestorani", query = "SELECT r FROM Restoran r"),
+        @NamedQuery(name = "Restoran.getRestoraniByName", query = "SELECT r FROM Restoran r WHERE r.naziv = :naziv")
+})
 @Table(name = "restoran")
 public class Restoran {
     public static final String GET_ALL_RESTORANI = "Restoran.getAllRestorani";
+    public static final String GET_RESTORANI_BY_NAME = "Restoran.getRestoraniByName";
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
