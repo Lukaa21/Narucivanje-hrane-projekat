@@ -1,8 +1,6 @@
 package me.fit.model;
 
 import jakarta.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Table(name = "narudzbina")
@@ -19,9 +17,6 @@ public class Narudzbina {
 
     @ManyToOne
     private Dostavljac dostavljac;
-
-    @ManyToMany
-    private List<Jelo> jela = new ArrayList<>();
 
     public Narudzbina() {
         super();
@@ -48,9 +43,6 @@ public class Narudzbina {
 
     public Dostavljac getDostavljac() { return dostavljac; }
     public void setDostavljac(Dostavljac dostavljac) { this.dostavljac = dostavljac; }
-
-    public List<Jelo> getJela() { return jela; }
-    public void ListJela(List<Jelo> jela) { this.jela = jela; }
 
     @Override
     public String toString() {

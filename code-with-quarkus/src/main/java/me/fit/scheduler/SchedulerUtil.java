@@ -10,7 +10,7 @@ public class SchedulerUtil {
     @RestClient
     TimeClient timeClient;
 
-    @Scheduled(every = "30s")
+    @Scheduled(every = "30000s")
     void getTime(){
         TimeResponse time = timeClient.getTime("Europe/Amsterdam");
         System.out.println(time);

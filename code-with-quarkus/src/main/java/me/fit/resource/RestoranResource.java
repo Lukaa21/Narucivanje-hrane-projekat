@@ -1,8 +1,13 @@
 package me.fit.resource;
 
 import jakarta.inject.Inject;
+import jakarta.persistence.EntityManager;
+import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
+import me.fit.model.DTO.CountryResponseDTO;
+import me.fit.model.client.CountryResponse;
 import me.fit.model.client.TimeResponse;
+import me.fit.restclient.CountryClient;
 import me.fit.restclient.TimeClient;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import jakarta.ws.rs.core.MediaType;
@@ -12,7 +17,6 @@ import jakarta.ws.rs.core.Response;
 import me.fit.model.Restoran;
 import me.fit.repository.RestoranRepository;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
-
 import java.util.List;
 
 @Path("/restoran/")
@@ -20,8 +24,14 @@ public class RestoranResource {
     @Inject
     RestoranRepository restoranRepo;
 
+    @Inject
+    EntityManager em;
+
     @RestClient
     TimeClient timeClient;
+
+    @RestClient
+    CountryClient countryClient;
 
     @ConfigProperty(name = "greeting.message")
     String message;
@@ -64,5 +74,35 @@ public class RestoranResource {
         TimeResponse time = timeClient.getTime(timeZone);
 
         return Response.ok().entity(time).build();
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/AvailableCountries")
+    public Response getAvailableCountries() {
+        List<CountryResponse> countries = countryClient.getAvailableCountries();
+        return Response.ok().entity(countries).build();
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/NextPublicHolidays/{countryCode}")
+    @Transactional
+    public Response getNextPublicHolidays(@PathParam("countryCode") String countryCode) {
+        List<CountryResponseDTO> dtos = countryClient.getNextPublicHolidays(countryCode);
+        List<CountryResponse> holidays = restoranRepo.fromDtoList(dtos);
+
+        for (CountryResponse holiday : holidays) {
+            Long count = em.createQuery(
+                            "SELECT COUNT(c) FROM CountryResponse c WHERE c.name = :name AND c.date = :date", Long.class)
+                    .setParameter("name", holiday.getName())
+                    .setParameter("date", holiday.getDate())
+                    .getSingleResult();
+
+            if (count == 0) {
+                em.persist(holiday);
+            }
+        }
+        return Response.ok().entity(holidays).build();
     }
 }
