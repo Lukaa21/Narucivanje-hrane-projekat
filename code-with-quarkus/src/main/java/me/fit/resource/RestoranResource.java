@@ -7,8 +7,10 @@ import jakarta.ws.rs.*;
 import me.fit.model.DTO.CountryResponseDTO;
 import me.fit.model.client.CountryResponse;
 import me.fit.model.client.TimeResponse;
+import me.fit.model.client.WeatherResponse;
 import me.fit.restclient.CountryClient;
 import me.fit.restclient.TimeClient;
+import me.fit.restclient.WeatherClient;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import jakarta.ws.rs.core.MediaType;
 import me.fit.exception.RestoranException;
@@ -29,6 +31,9 @@ public class RestoranResource {
 
     @RestClient
     TimeClient timeClient;
+
+    @RestClient
+    WeatherClient weatherClient;
 
     @RestClient
     CountryClient countryClient;
@@ -82,6 +87,16 @@ public class RestoranResource {
     public Response getAvailableCountries() {
         List<CountryResponse> countries = countryClient.getAvailableCountries();
         return Response.ok().entity(countries).build();
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/getForecast")
+    @Transactional
+    public Response getForecast(@QueryParam(value = "city") String city) {
+         WeatherResponse weather = weatherClient.getForecast(city);
+         restoranRepo.saveAndFilterForecast(weather);
+         return Response.ok().entity(weather).build();
     }
 
     @GET

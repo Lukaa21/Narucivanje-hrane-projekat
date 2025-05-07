@@ -10,6 +10,8 @@ import me.fit.exception.RestoranException;
 import me.fit.model.Restoran;
 import me.fit.model.client.CountryResponse;
 import me.fit.model.client.HolidayType;
+import me.fit.model.client.WeatherResponse;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -77,5 +79,20 @@ public class RestoranRepository {
         holiday.setTypes(typeEntities);
         return holiday;
     }
+
+    public void saveAndFilterForecast(WeatherResponse weather) {
+        Long count = em.createQuery(
+                        "SELECT COUNT(w) FROM WeatherResponse w WHERE w.description = :description AND w.temperature = :temperature AND w.wind = :wind", Long.class)
+                .setParameter("description", weather.getDescription())
+                .setParameter("temperature", weather.getTemperature())
+                .setParameter("wind", weather.getWind())
+                .getSingleResult();
+
+        if (count == 0) {
+            em.persist(weather);
+        }
+    }
+
+
 
 }

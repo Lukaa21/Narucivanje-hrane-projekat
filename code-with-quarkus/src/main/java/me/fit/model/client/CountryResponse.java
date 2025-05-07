@@ -8,8 +8,6 @@ public class CountryResponse {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
-
-    @Column(name = "date", unique = true)
     private String date;
     private String localName;
     private String name;

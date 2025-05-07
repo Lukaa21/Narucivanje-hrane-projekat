@@ -1,7 +1,6 @@
 package me.fit.model;
 
 import jakarta.persistence.*;
-import java.util.Objects;
 import java.util.Set;
 
 @Entity
